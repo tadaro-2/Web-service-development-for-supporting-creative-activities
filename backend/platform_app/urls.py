@@ -1,0 +1,68 @@
+from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView
+
+from platform_app import api_activity, api_ai, api_challenges, api_content, api_palette_generate, views
+
+urlpatterns = [
+    path("auth/register/", views.RegisterView.as_view(), name="auth-register"),
+    path("auth/verify-email/", views.VerifyEmailView.as_view(), name="auth-verify-email"),
+    path("auth/resend-code/", views.ResendVerificationView.as_view(), name="auth-resend-code"),
+    path("auth/token/", views.VerifiedOnlyTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("auth/me/", views.MeView.as_view(), name="auth-me"),
+    path("activity/ping/", api_activity.ActivityPingView.as_view(), name="activity-ping"),
+    path("activity/summary/", api_activity.ActivitySummaryView.as_view(), name="activity-summary"),
+    path("onboarding/survey/", views.OnboardingSurveyView.as_view(), name="onboarding-survey"),
+    path("tags/me/", views.MyTagsView.as_view(), name="tags-me"),
+    path("profile/me/", views.MyProfileView.as_view(), name="profile-me"),
+    path("profile/check-nickname/", views.CheckNicknameView.as_view(), name="profile-check-nickname"),
+    path("bookmarks/overview/", api_content.BookmarksOverviewView.as_view(), name="bookmarks-overview"),
+    path("creative/ai/associations/", api_ai.AiAssociationsView.as_view(), name="ai-associations"),
+    path("creative/ai/random-phrase/", api_ai.AiRandomPhraseView.as_view(), name="ai-random-phrase"),
+    path("admin/ai/model/", api_ai.AdminAiModelSettingView.as_view(), name="admin-ai-model"),
+    path("admin/ai/models/", api_ai.AdminOpenAiModelsListView.as_view(), name="admin-ai-models"),
+    path("creative/generations/<int:pk>/bookmark/", api_content.AiGenerationBookmarkToggleView.as_view(), name="gen-bookmark"),
+    path("creative/palettes/generate/", api_palette_generate.PaletteGenerateView.as_view(), name="palette-generate"),
+    path("creative/palettes/<int:pk>/bookmark/", api_content.PaletteBookmarkToggleView.as_view(), name="palette-bookmark"),
+    path("tags/catalog/", api_content.TagCatalogView.as_view(), name="tags-catalog"),
+    path("posts/feed/", api_content.PostFeedView.as_view(), name="post-feed"),
+    path("posts/my/", api_content.PostMyListView.as_view(), name="post-my"),
+    path("posts/bookmarks/", api_content.SavedPostsView.as_view(), name="post-bookmarks"),
+    #привязка пути к классу PostSubmissionCreateView
+    path("posts/submit/", api_content.PostSubmissionCreateView.as_view(), name="post-submit"),
+    path("posts/pending/", api_content.PostPendingModerationView.as_view(), name="post-pending"),
+    path("posts/<int:pk>/", api_content.PostDetailPublicView.as_view(), name="post-detail"),
+    path("posts/<int:pk>/moderate/", api_content.PostModerateView.as_view(), name="post-moderate"),
+    path("posts/<int:pk>/like/", api_content.PostLikeToggleView.as_view(), name="post-like"),
+    path("posts/<int:pk>/bookmark/", api_content.PostBookmarkToggleView.as_view(), name="post-bookmark"),
+    path("posts/<int:pk>/comments/", api_content.PostCommentsView.as_view(), name="post-comments"),
+    path("users/<int:user_id>/profile/", api_content.PublicUserProfileView.as_view(), name="user-public-profile"),
+    path("materials/", api_content.MaterialListView.as_view(), name="material-list"),
+    path("materials/manage/", api_content.MaterialCreateAdminView.as_view(), name="material-manage"),
+    path("materials/<int:pk>/bookmark/", api_content.MaterialBookmarkToggleView.as_view(), name="material-bookmark"),
+    path("materials/<int:pk>/", api_content.MaterialDestroyView.as_view(), name="material-destroy"),
+    path("challenges/", api_challenges.ChallengeListPublicView.as_view(), name="challenge-list"),
+    path("challenges/<int:pk>/", api_challenges.ChallengeDetailPublicView.as_view(), name="challenge-detail"),
+    path("challenges/<int:pk>/join/", api_challenges.ChallengeJoinView.as_view(), name="challenge-join"),
+    path(
+        "challenges/<int:pk>/participation/",
+        api_challenges.ChallengeParticipationRefreshView.as_view(),
+        name="challenge-participation",
+    ),
+    path("admin/challenges/", api_challenges.AdminChallengeListCreateView.as_view(), name="admin-challenges"),
+    path(
+        "admin/challenges/<int:pk>/",
+        api_challenges.AdminChallengeDetailPatchView.as_view(),
+        name="admin-challenge-detail",
+    ),
+    path(
+        "admin/challenges/<int:pk>/publish/",
+        api_challenges.AdminChallengePublishView.as_view(),
+        name="admin-challenge-publish",
+    ),
+    path(
+        "admin/challenges/<int:pk>/unpublish/",
+        api_challenges.AdminChallengeUnpublishView.as_view(),
+        name="admin-challenge-unpublish",
+    ),
+]
